@@ -156,8 +156,23 @@ static void make_output(unsigned char *sdt, int len)
 //{int i; for (i=0; i<14; i++) fprintf(stderr, "0x%02hhx ", *(p+4+p[3]+1+i)); fprintf(stderr,"\n");}
 					aribstr_to_utf8(p + 4 + p[3] + 1, *(p + 4 + p[3]),
 						chname, sizeof(chname));
-					printf("%s:DTV_DELIVERY_SYSTEM=%d",
-						chname, (mode != TER)? SYS_ISDBS : SYS_ISDBT);
+
+                    switch (mode) {
+                    case TER:
+                        printf("%d:%s:DTV_DELIVERY_SYSTEM=%d",
+                            CH_IDX - 1, chname, (mode != TER)? SYS_ISDBS : SYS_ISDBT);
+                        break;
+                    case BS:
+                        printf("BS_%d:%s:DTV_DELIVERY_SYSTEM=%d",
+                            svc_id, chname, (mode != TER)? SYS_ISDBS : SYS_ISDBT);
+                        break;
+                    case CS110:
+                        printf("CS_%d:%s:DTV_DELIVERY_SYSTEM=%d",
+                            svc_id, chname, (mode != TER)? SYS_ISDBS : SYS_ISDBT);
+                        break;
+                    default:
+                        break;
+                    }
 
 					if (mode != TER && volt)
 						printf("|DTV_VOLTAGE=1");
